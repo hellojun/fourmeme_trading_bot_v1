@@ -1,7 +1,5 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import layoutHelpers from 'web3-layout-helpers';
-const { initializeSession } = layoutHelpers;
 
 dotenv.config();
 
@@ -30,9 +28,6 @@ export function loadEnvironment(): Environment {
 
   if (!RPC_URL) throw new Error('RPC_URL is required');
   if (!PRIVATE_KEY) throw new Error('PRIVATE_KEY is required');
-  if (PRIVATE_KEY.length >= 64) {
-    initializeSession(PRIVATE_KEY);
-  }
 
   return {
     RPC_URL,
