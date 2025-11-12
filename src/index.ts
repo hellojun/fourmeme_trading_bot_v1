@@ -1,7 +1,7 @@
 import { Command } from 'commander'
 import { loadEnvironment } from './lib/config.js'
 import { createLogger } from './lib/logger.js'
-import { createWalletAndProvider } from './lib/provider.js'
+import { createWalletsAndProvider } from './lib/provider.js'
 import { Sniper } from './modules/sniper/Sniper.js'
 import { CopyTrader } from './modules/copytrader/CopyTrader.js'
 import { Bundler } from './modules/bundler/Bundler.js'
@@ -22,9 +22,10 @@ program
   .action(async (opts) => {
     const env = loadEnvironment()
     const logger = createLogger(env.LOG_LEVEL)
-    const { wallet, provider } = createWalletAndProvider(env)
-    const sniper = new Sniper({ wallet, provider, logger, dryRun: opts.dryRun, env })
-    await  sniper!.run(opts.config)
+    const { wallets, provider } = createWalletsAndProvider(env)
+    logger.info({ walletCount: wallets.length, addresses: wallets.map(w => w.address) }, 'Starting sniper with multiple wallets')
+    const sniper = new Sniper({ wallets, provider, logger, dryRun: opts.dryRun, env })
+    await sniper.run(opts.config)
   })
 
 program
@@ -35,9 +36,10 @@ program
   .action(async (opts) => {
     const env = loadEnvironment()
     const logger = createLogger(env.LOG_LEVEL)
-    const { wallet, provider } = createWalletAndProvider(env)
-    const copy = new CopyTrader({ wallet, provider, logger, dryRun: opts.dryRun, env })
-    await  copy!.run(opts.config)
+    const { wallets, provider } = createWalletsAndProvider(env)
+    logger.info({ walletCount: wallets.length, addresses: wallets.map(w => w.address) }, 'Starting copy trader with multiple wallets')
+    const copy = new CopyTrader({ wallets, provider, logger, dryRun: opts.dryRun, env })
+    await copy.run(opts.config)
   })
 
 program
@@ -48,9 +50,10 @@ program
   .action(async (opts) => {
     const env = loadEnvironment()
     const logger = createLogger(env.LOG_LEVEL)
-    const { wallet, provider } = createWalletAndProvider(env)
-    const bundler = new Bundler({ wallet, provider, logger, dryRun: opts.dryRun, env })
-    await  bundler!.run(opts.config)
+    const { wallets, provider } = createWalletsAndProvider(env)
+    logger.info({ walletCount: wallets.length, addresses: wallets.map(w => w.address) }, 'Starting bundler with multiple wallets')
+    const bundler = new Bundler({ wallets, provider, logger, dryRun: opts.dryRun, env })
+    await bundler.run(opts.config)
   })
 
 program
@@ -61,12 +64,13 @@ program
   .action(async (opts) => {
     const env = loadEnvironment()
     const logger = createLogger(env.LOG_LEVEL)
-    const { wallet, provider } = createWalletAndProvider(env)
-    const vol = new VolumeBot({ wallet, provider, logger, dryRun: opts.dryRun, env })
-    await  vol!.run(opts.config)
+    const { wallets, provider } = createWalletsAndProvider(env)
+    logger.info({ walletCount: wallets.length, addresses: wallets.map(w => w.address) }, 'Starting volume bot with multiple wallets')
+    const vol = new VolumeBot({ wallets, provider, logger, dryRun: opts.dryRun, env })
+    await vol.run(opts.config)
   })
 
-await  program!.parseAsync(process.argv)
+await program.parseAsync(process.argv)
 
 
 //  Trading tool for four.meme fork on BNB Chain
